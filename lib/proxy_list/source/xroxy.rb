@@ -4,13 +4,20 @@ require 'open-uri'
 module ProxyList
     class Source
         class Xroxy
-            OPTIONS_DEFAULT = {page_count: 10, country: "US", type: "All_http"}
-
             def list(options={})
-                options = OPTIONS_DEFAULT.merge!(options)
-                page_count = options[:page_count]
                 country = options[:country]
-                type = options[:type]
+                if options[:type] == "http"
+                    type = "All_http"
+                elsif options[:type] == "socks5"
+                    type = "Socks5"
+                else
+                    type = "All_http"
+                end
+                if options.has_key?(:count)
+                    page_count = options[:count]
+                else
+                    page_count = 10
+                end
 
                 proxy_servers = []
                 page_count.times do |p|
