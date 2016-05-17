@@ -1,4 +1,5 @@
 require 'httparty'
+require 'nokogiri'
 require 'thread/pool'
 
 module ProxyList
@@ -11,7 +12,10 @@ module ProxyList
       return false if server.nil? || port.nil?
 
       response = HTTParty.get('http://amazon.com', :http_proxyaddr => server, :http_proxyport => port, :timeout => timeout)
-      response.success?
+      doc = Nokogiri.HTML(response.body)
+      return true if doc.title == "Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more"
+      return false
+      #response.success?
 
     rescue Net::OpenTimeout
       false
